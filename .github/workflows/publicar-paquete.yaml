@@ -1,0 +1,28 @@
+name: Publicar paquete en GitHub
+on:
+    push:
+        branches:
+            - main
+jobs:
+    publicar-paquete:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            packages: write
+        steps:
+            - name: Clonar repositorio
+              uses: actions/checkout@v4
+
+            - name: configurar .npmrc
+              uses: actions/setup-node@v4
+              with:
+                node-version: '20.x'
+                registry-url: 'https://npm.pkg.github.com'
+                scope: '@IsaiasRVH2'
+            - name: Instalar dependencias usando versiones de package-lock.json
+              run: npm ci
+            - name: Publicar el paquete en GitHub Packages
+              run: npm publish
+              env:
+                NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
